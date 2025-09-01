@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>بان | دليل الإعلانات</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="google-site-verification" content="uCnALjYiLbrlatRJKgg6BYdo-G6vs-Ic-68FW4ieqNk" />
+  <style>
+    body { font-family: 'Cairo', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; }
+    /* Loader */
+    .loader { display: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; color: #475569; min-height: 60vh; }
+    .logo-pulse {
+      animation: pulseLogo 1.2s infinite cubic-bezier(.4,0,.6,1);
+    }
+    @keyframes pulseLogo {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+    .spinner { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur sticky top-0 z-20 border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="WhatsApp Image 2025-08-31 at 20.32.13_8048a3a3.jpg" alt="شعاربان" class="w-16 h-16 object-contain rounded-2xl shadow" />
+        <div>
+          <h1 class="text-2xl font-extrabold leading-none">بان</h1>
+          <p class="text-xs text-slate-500 -mt-1">دليل الأماكن والعروض حولك</p>
+        </div>
+      </div>
+      <a target="_blank" rel="noreferrer" href="https://moslimtech.github.io/eshtrywdashboard/"
+         class="block w-full sm:w-auto text-center bg-gradient-to-r from-indigo-500 to-violet-600 text-white px-3 py-2 sm:px-5 sm:py-3 rounded-2xl shadow-lg text-sm sm:text-base font-bold hover:from-indigo-600 hover:to-violet-700 transition-all duration-200 border-2 border-indigo-100 mx-auto sm:mx-0 mt-4 sm:mt-0 mb-2 sm:mb-0">
+        لو انت تمتلك خدمه وحابب تعلن عنها اضغط هنا
+      </a>
+    </div>
+  </header>
+
+  <!-- Filters Bar -->
+  <section class="border-b border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="grid md:grid-cols-5 sm:grid-cols-2 grid-cols-1 gap-3">
+        <div class="col-span-1">
+          <label class="block text-sm font-semibold mb-1">المدينة</label>
+          <select id="citySelect" class="w-full rounded-2xl border-slate-300 focus:ring-2 focus:ring-indigo-500">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <div class="col-span-1">
+          <label class="block text-sm font-semibold mb-1">المنطقة</label>
+          <select id="areaSelect" class="w-full rounded-2xl border-slate-300 focus:ring-2 focus:ring-indigo-500">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <div class="col-span-1">
+          <label class="block text-sm font-semibold mb-1">نوع النشاط</label>
+          <select id="activitySelect" class="w-full rounded-2xl border-slate-300 focus:ring-2 focus:ring-indigo-500">
+            <option value="">الكل</option>
+          </select>
+        </div>
+        <!-- <input id="searchInput" type="text" placeholder="اكتب كلمة للبحث..." class="w-full rounded-2xl border-slate-300 focus:ring-2 focus:ring-indigo-500" /> -->
+        <!-- تم حذف كل ما يخص 'ترتيب حسب' و'الاسم' من الفلتر بناءً على طلب المستخدم -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div id="stats" class="mb-4 text-sm text-slate-600"></div>
+    <div id="cacheLoadingMsg" class="mb-4 text-sm text-indigo-600 hidden">جاري تحميل بيانات أحدث...</div>
+
+    <div id="cardsGrid" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"></div>
+
+    <div id="emptyState" class="hidden rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">
+      لا توجد نتائج مطابقة للفلاتر الحالية.
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm text-slate-500">
+      كل الحقوق محفوظة |بان 2025
+      <div class="mt-4">
+        <div class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white rounded-2xl px-4 py-3 shadow-lg flex items-center justify-between gap-3 flex-wrap">
+          <div class="text-sm sm:text-base font-semibold">
+            تطوير: <span class="font-bold">Muslim Tech _ مسلم تيك</span>
+          </div>
+          <div class="text-xs sm:text-sm font-normal mt-1 flex flex-col items-center sm:items-start">
+            <span>المطور:</span>
+            <span>م/ احمد نجيب</span>
+            <span>م/ ابراهيم مبروك</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-white/90 text-sm sm:text-base">تواصل واتساب:</span>
+            <a href="https://wa.me/01108857529" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-3 py-1.5 rounded-xl text-sm font-semibold transition">
+              01108857529
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ضع رابط الويب آب الخاص بك هنا 👇 (بدّل هذا الرابط برابطك أنت)
+    const API_BASE = "https://script.google.com/macros/s/AKfycbwB0VE5COC0e6NQNKrxQeNRu2Mtt_QuMbVoBrH7tE6Da3X3BP6UxK926bt9fDO0WPU5/exec";
+    const REFRESH_MS = 7000; // فترة التحديث التلقائي (أقل من 20 ثانية)
+
+    // كاش عام للبيانات
+    let ALL_PLACES = [];
+    let FILTERS = { cities: [], areas: [], activities: [] };
+    // خريطة: cityId -> cityName
+    let CITY_ID_TO_NAME = {};
+    let PLACE_CARDS_BY_ID = new Map();
+    let LAST_AD_STATUS_BY_PLACE = new Map();
+    let FIRST_LOAD_DONE = false;
+    let SCROLL_POSITION = 0;
+    let FILTER_STATE = {};
+    let IS_RETURNING_FROM_ADS = false;
+    
+    // عناصر DOM
+    const citySelect = document.getElementById('citySelect');
+    const areaSelect = document.getElementById('areaSelect');
+    const activitySelect = document.getElementById('activitySelect');
+    // const searchInput = document.getElementById('searchInput'); // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+    const cardsGrid = document.getElementById('cardsGrid');
+    const emptyState = document.getElementById('emptyState');
+    const stats = document.getElementById('stats');
+    // const sortSelect = document.getElementById('sortSelect'); // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+    // const loaderEl = document.getElementById('loader');
+    const cacheLoadingMsg = document.getElementById('cacheLoadingMsg');
+
+    // Helpers
+    const fetchJSON = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Network error');
+      return res.json();
+    };
+
+    const setOptions = (selectEl, options, { withAll=true } = {}) => {
+      selectEl.innerHTML = '';
+      if (withAll) {
+        const opt = document.createElement('option');
+        opt.value = '';
+        opt.textContent = 'الكل';
+        selectEl.appendChild(opt);
+      }
+      options.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.value;
+        opt.textContent = o.label;
+        selectEl.appendChild(opt);
+      });
+    };
+
+    const normalize = (s) => (s || '').toString().toLowerCase().trim();
+ 
+    // جعل البحث والفلاتر حصريين (mutual exclusive)
+    // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+    function updateControlLocking() {
+      // const searchActive = isSearchActive(); // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      // const filtersActive = isAnyFilterActive(); // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      // if (searchActive) {
+      //   [citySelect, areaSelect, activitySelect].forEach(el => { el.disabled = true; el.classList.add('opacity-50', 'cursor-not-allowed'); });
+      //   searchInput.disabled = false;
+      //   searchInput.classList.remove('opacity-50', 'cursor-not-allowed');
+      // } else if (filtersActive) {
+      //   [citySelect, areaSelect, activitySelect].forEach(el => { el.disabled = false; el.classList.remove('opacity-50', 'cursor-not-allowed'); });
+      //   searchInput.disabled = true;
+      //   searchInput.classList.add('opacity-50', 'cursor-not-allowed');
+      // } else {
+      //   [citySelect, areaSelect, activitySelect].forEach(el => { el.disabled = false; el.classList.remove('opacity-50', 'cursor-not-allowed'); });
+      //   searchInput.disabled = false;
+      //   searchInput.classList.remove('opacity-50', 'cursor-not-allowed');
+      // }
+    }
+
+    const phoneHref = (v) => v ? `tel:${v}` : '#';
+    const waHref = (v) => {
+      if (!v) return '#';
+      // لو المستخدم كاتب wa.me/2010... أو رقم فقط
+      if (/^https?:\/\//.test(v)) return v;
+      return `https://wa.me/${v.replace(/\D/g, '')}`;
+    };
+
+    const fallbackImg = 'Logo Design with Icon and Arabic Text.png';
+    // const showLoader = () => { if (loaderEl) loaderEl.style.display = 'flex'; };
+    // const hideLoader = () => { if (loaderEl) loaderEl.style.display = 'none'; };
+    
+    // التحقق من العودة من صفحة الإعلانات وحفظ/استعادة الحالة
+    function checkReturnFromAds() {
+      const isReturning = document.referrer.includes('ads.html');
+      if (isReturning) {
+        IS_RETURNING_FROM_ADS = true;
+        // استعادة موقع التمرير وحالة الفلترة
+        restoreState();
+      }
+    }
+    
+    // حفظ الحالة الحالية
+    function saveState() {
+      FILTER_STATE = {
+        city: citySelect.value,
+        area: areaSelect.value,
+        activity: activitySelect.value,
+        // search: searchInput.value, // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+        // sort: sortSelect.value // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+      };
+      SCROLL_POSITION = window.scrollY;
+      
+      // حفظ في localStorage للاستخدام لاحقاً
+      localStorage.setItem('makank_filter_state', JSON.stringify(FILTER_STATE));
+      localStorage.setItem('makank_scroll_position', SCROLL_POSITION.toString());
+    }
+    
+    // استعادة الحالة المحفوظة
+    function restoreState() {
+      try {
+        const savedFilterState = localStorage.getItem('makank_filter_state');
+        const savedScrollPosition = localStorage.getItem('makank_scroll_position');
+        
+        if (savedFilterState) {
+          FILTER_STATE = JSON.parse(savedFilterState);
+        }
+        
+        if (savedScrollPosition) {
+          SCROLL_POSITION = parseInt(savedScrollPosition);
+        }
+      } catch (e) {
+        console.warn('فشل في استعادة الحالة المحفوظة:', e);
+      }
+    }
+    
+    // تطبيق الحالة المحفوظة
+    function applySavedState() {
+      if (!IS_RETURNING_FROM_ADS) return;
+      
+      // تطبيق الفلاتر المحفوظة
+      if (FILTER_STATE.city) {
+        citySelect.value = FILTER_STATE.city;
+        handleCityChange(); // هذا سيحدث المناطق أيضاً
+      }
+      
+      if (FILTER_STATE.area) {
+        areaSelect.value = FILTER_STATE.area;
+      }
+      
+      if (FILTER_STATE.activity) {
+        activitySelect.value = FILTER_STATE.activity;
+      }
+      
+      // if (FILTER_STATE.search) { // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      //   searchInput.value = FILTER_STATE.search;
+      // }
+      
+      // if (FILTER_STATE.sort) { // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+      //   sortSelect.value = FILTER_STATE.sort;
+      // }
+      
+      // تطبيق الفلترة
+      applyFilters();
+      
+      // استعادة موقع التمرير بعد تحميل البطاقات
+      setTimeout(() => {
+        window.scrollTo(0, SCROLL_POSITION);
+      }, 100);
+    }
+   
+   // تنظيف الحالة المحفوظة
+   function clearSavedState() {
+     localStorage.removeItem('makank_filter_state');
+     localStorage.removeItem('makank_scroll_position');
+     FILTER_STATE = {};
+     SCROLL_POSITION = 0;
+     IS_RETURNING_FROM_ADS = false;
+     console.log('تم تنظيف الحالة المحفوظة');
+   }
+   
+   // تنظيف الحالة عند تحميل الصفحة لأول مرة (وليس العودة من الإعلانات)
+   function clearStateOnFreshLoad() {
+     if (!document.referrer.includes('ads.html')) {
+       clearSavedState();
+     }
+   }
+
+    // Helpers for status badge
+    const isUrlLike = (v) => typeof v === 'string' && /(https?:\/\/|\.mp4|\.mov|\.avi|youtube\.com|youtu\.be)/i.test(v);
+    const OPEN_STATUS_VALUES = new Set(['مفتوح', 'مغلق', 'مغلق للصلاة']);
+    const isValidOpenStatus = (val) => OPEN_STATUS_VALUES.has((val || '').toString().trim());
+
+    // دالة للحصول على أيقونة الحالة
+    function getStatusIcon(status) {
+        switch (status.trim()) {
+            case 'مفتوح':
+                return `<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>`;
+            case 'مغلق':
+                return `<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>`;
+            case 'مغلق للصلاة':
+                return `<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>`;
+            default:
+                return `<svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>`;
+        }
+    }
+
+    // دالة للحصول على أيقونة حالة التسجيل
+    function getRegistrationIcon(status) {
+        switch (status.trim()) {
+            case 'جديد':
+                return `<svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
+                </svg>`;
+            case 'قديم':
+                return `<svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>`;
+            case 'مميز':
+                return `<svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>`;
+            default:
+                return `<svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>`;
+        }
+    }
+
+    // دالة لتحديث بادج حالة التسجيل
+    function updateRegistrationBadge(el, registrationStatus) {
+        if (!el) return;
+        
+        // إخفاء البادج إذا لم توجد حالة تسجيل
+        if (!registrationStatus || registrationStatus.trim() === '') {
+            el.classList.add('hidden');
+            return;
+        }
+        
+        // تنظيف النص
+        const status = registrationStatus.trim();
+        
+        // عرض البادج مع النص والأيقونة
+        el.innerHTML = status + getRegistrationIcon(status);
+        el.classList.remove('hidden', 'bg-blue-500', 'bg-gray-500', 'bg-yellow-500', 'bg-purple-500', 'bg-slate-500');
+        
+        // تحديد اللون حسب حالة التسجيل
+        switch (status) {
+            case 'جديد':
+                el.classList.add('bg-blue-500');
+                break;
+            case 'قديم':
+                el.classList.add('bg-gray-500');
+                break;
+            case 'مميز':
+                el.classList.add('bg-yellow-500');
+                break;
+            case 'عادي':
+                el.classList.add('bg-purple-500');
+                break;
+            default:
+                el.classList.add('bg-slate-500');
+        }
+    }
+
+    // دالة لتحديث بادج حالة الباقة
+    function updatePackageBadge(el, packageStatus) {
+        if (!el) return;
+        
+        // إخفاء البادج إذا لم توجد حالة باقة
+        if (!packageStatus || packageStatus.trim() === '') {
+            el.classList.add('hidden');
+            return;
+        }
+        
+        // تنظيف النص
+        const status = packageStatus.trim();
+        
+        // عرض البادج مع النص
+        el.innerHTML = status;
+        el.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'bg-yellow-500', 'bg-slate-500');
+        
+        // تحديد اللون حسب حالة الباقة
+        switch (status) {
+            case 'نشط':
+                el.classList.add('bg-green-500');
+                break;
+            case 'منتهي':
+                el.classList.add('bg-red-500');
+                break;
+            case 'معلق':
+                el.classList.add('bg-yellow-500');
+                break;
+            default:
+                el.classList.add('bg-slate-500');
+        }
+    }
+
+    // دالة لتحديث بادج حالة المكان
+    function updatePlaceStatusBadge(el, placeStatus) {
+        if (!el) return;
+        
+        // إخفاء البادج إذا لم توجد حالة مكان
+        if (!placeStatus || placeStatus.trim() === '') {
+            el.classList.add('hidden');
+            return;
+        }
+        
+        // تنظيف النص
+        const status = placeStatus.trim();
+        
+        // عرض البادج مع النص والأيقونة
+        el.innerHTML = getStatusIcon(status) + status;
+        el.classList.remove('hidden', 'bg-emerald-500', 'bg-rose-500', 'bg-amber-500', 'bg-slate-500');
+        
+        // تحديد اللون حسب حالة المكان
+        switch (status) {
+            case 'مفتوح':
+                el.classList.add('bg-emerald-500');
+                break;
+            case 'مغلق':
+                el.classList.add('bg-rose-500');
+                break;
+            case 'مغلق للصلاة':
+                el.classList.add('bg-amber-500');
+                break;
+            default:
+                el.classList.add('bg-slate-500');
+        }
+    }
+
+    async function updateStatusBadge(el, { placeId, status }) {
+      if (!el) return;
+      let finalStatus = status || '';
+      try {
+        if (!finalStatus && placeId) {
+          const ads = await fetchJSON(`${API_BASE}?action=getAdsByPlaceId&placeId=${placeId}&_=${Date.now()}`);
+          if (Array.isArray(ads) && ads.length) {
+            // استخدم فقط عمود "الحالة" وبشرط أن تكون قيمة معتبرة (مفتوح/مغلق/مغلق للصلاة)
+            const ad = ads[0];
+            const candidate = ad['الحالة'];
+            if (isValidOpenStatus(candidate)) {
+              finalStatus = candidate;
+            }
+          }
+          // Fallback: جرّب جلب كل الإعلانات والبحث محليًا
+          if (!finalStatus) {
+            try {
+              const allAds = await fetchJSON(`${API_BASE}?action=getAds&_=${Date.now()}`);
+              if (Array.isArray(allAds)) {
+                const key = String(placeId);
+                const match = allAds.find(a => {
+                  const adPlaceId = a['ID المكان'] || a['placeId'] || a['idPlace'] || a['place_id'] || a['placeID'] || a['ID_PLACE'];
+                  return String(adPlaceId) === key;
+                });
+                if (match && isValidOpenStatus(match['الحالة'])) {
+                  finalStatus = match['الحالة'].trim();
+                }
+              }
+            } catch (e2) {
+              console.warn('fallback getAds failed', e2);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('status fetch failed for place', placeId, e);
+      }
+      
+      // في حال لم نجد حالة الآن، استخدم آخر حالة معروفة لمنع الوميض
+      if (!finalStatus || finalStatus.trim() === '' || !isValidOpenStatus(finalStatus)) {
+        const key = placeId != null ? String(placeId) : undefined;
+        if (key && LAST_AD_STATUS_BY_PLACE.has(key)) {
+          finalStatus = LAST_AD_STATUS_BY_PLACE.get(key);
+        } else {
+          el.classList.add('hidden');
+          return;
+        }
+      }
+      
+      // تنظيف النص
+      finalStatus = finalStatus.trim();
+      
+      // عرض البادج مع النص والحالة والأيقونة
+      el.innerHTML = getStatusIcon(finalStatus) + finalStatus;
+      el.classList.remove('hidden', 'bg-emerald-500', 'bg-rose-500', 'bg-amber-500', 'bg-slate-500');
+      
+      // تحديد اللون حسب الحالة
+      switch (finalStatus) {
+        case 'مفتوح':
+          el.classList.add('bg-emerald-500');
+          break;
+        case 'مغلق':
+          el.classList.add('bg-rose-500');
+          break;
+        case 'مغلق للصلاة':
+          el.classList.add('bg-amber-500');
+          break;
+        default:
+          el.classList.add('bg-slate-500');
+      }
+
+      // خزّن آخر حالة معروفة
+      if (placeId != null) {
+        LAST_AD_STATUS_BY_PLACE.set(String(placeId), finalStatus);
+      }
+    }
+
+    // رسم الكروت
+    function renderCards(list) {
+      cardsGrid.innerHTML = '';
+      PLACE_CARDS_BY_ID = new Map();
+      if (!list.length) {
+        emptyState.classList.remove('hidden');
+        stats.textContent = '0 نتيجة';
+        return;
+      }
+      emptyState.classList.add('hidden');
+      stats.textContent = `${list.length} نتيجة`;
+
+      const frag = document.createDocumentFragment();
+      list.forEach(p => {
+        const card = document.createElement('article');
+        card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition relative';
+
+        const imgSrc = p.image || p["image"] || p["رابط صورة شعار المكان"] || fallbackImg;
+        const name = p.name || p["name"] || p["اسم المكان"] || '—';
+        const activity = p.activity || p["activity"] || p["نوع النشاط / الفئة"] || '';
+        const city = p.city || p["city"] || p["المدينة"] || '';
+        const area = p.area || p["area"] || p["المنطقة"] || '';
+        const phone = p.phone || p["phone"] || p["رقم التواصل"] || '';
+        const mapLink = p.mapLink || p["mapLink"] || p["رابط الموقع على الخريطة"] || '';
+        const whatsapp = p.whatsapp || p["whatsapp"] || p["رابط واتساب"] || '';
+        const workHours = p.workHours || p["ساعات العمل"] || '';
+        const desc = p.description || p["description"] || p["وصف مختصر"] || '';
+        const dailyVisits = p.dailyVisits || p["عدد الزيارات اليومية"] || 0;
+        const totalVisits = p.totalVisits || p["عدد الزيارات الكلي"] || 0;
+        const registrationStatus = p.registrationStatus || p["حالة التسجيل"] || '';
+        const packageStatus = p.packageStatus || p["حالة الباقة"] || '';
+        const placeStatus = p.status || p['الحالة'] || '';
+        const mall = p.mall || p["الموقع او المول"] || '';
+        const address = p.address || p["العنوان التفصيلي"] || '';
+        const email = p.email || p["البريد الإلكتروني"] || '';
+        const website = p.website || p["الموقع الالكتروني"] || '';
+
+        card.innerHTML = `
+          <span class="status-badge absolute top-3 left-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10 backdrop-blur-sm"></span>
+          <span class="package-badge absolute top-12 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10 backdrop-blur-sm"></span>
+          <div class="aspect-[16/10] bg-slate-100 overflow-hidden">
+            <img src="${imgSrc}" onerror="this.src='${fallbackImg}'" class="w-full h-full object-cover" alt="${name}">
+          </div>
+          <div class="p-4">
+            <h3 class="text-lg font-bold">${name}</h3>
+            ${mall ? `<div class="text-xs text-indigo-700 font-semibold mt-1">الموقع أو المول: <span class='font-normal text-slate-700'>${mall}</span></div>` : ''}
+            ${address ? `<div class="text-xs text-slate-700 font-semibold mt-1 mb-2">العنوان: <span class='font-normal text-slate-700'>${address}</span></div>` : ''}
+            <p class="text-sm text-slate-600 mt-1">${activity ? activity + ' • ' : ''}${city}${city && area ? ' - ' : ''}${area}</p>
+            ${desc ? `<p class="text-sm text-slate-600 mt-2 line-clamp-2">${desc}</p>` : ''}
+            <div class="flex items-center gap-4 mt-3 text-xs text-slate-500">
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>اليوم: ${dailyVisits}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                </svg>
+                <span>الإجمالي: ${totalVisits}</span>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 mt-3">
+              ${phone ? `<a href="${phoneHref(phone)}" class="px-3 py-1.5 rounded-xl text-sm bg-slate-100 hover:bg-slate-200">اتصال</a>` : ''}
+              ${whatsapp ? `<a target="_blank" href="${waHref(whatsapp)}" class="px-3 py-1.5 rounded-xl text-sm bg-emerald-100 hover:bg-emerald-200">واتساب</a>` : ''}
+              ${mapLink ? `<a target="_blank" href="${mapLink}" class="px-3 py-1.5 rounded-xl text-sm bg-indigo-100 hover:bg-indigo-200">الخريطة</a>` : ''}
+              ${email ? `<a href="mailto:${email}" class="px-3 py-1.5 rounded-xl text-sm bg-blue-100 hover:bg-blue-200">إيميل</a>` : ''}
+              ${website ? `<a target="_blank" href="${website}" class="px-3 py-1.5 rounded-xl text-sm bg-violet-100 hover:bg-violet-200">الموقع</a>` : ''}
+            </div>
+          </div>`;
+
+        // عند الضغط على الكارت: نقدر لاحقًا نعرض الإعلانات الخاصة بالمكان (اختياري الآن)
+        card.addEventListener('click', () => {
+          // حفظ الحالة الحالية قبل الانتقال
+          saveState();
+          
+          // تسجيل الزيارة قبل الانتقال
+          const placeId = p.id || p["ID المكان"] || '';
+          if (placeId) {
+            fetch(`${API_BASE}?type=place&id=${placeId}&source=card_click`, { 
+              method: 'GET',
+              cache: 'no-store'
+            }).then(() => {
+              console.log('تم تسجيل الزيارة للمكان:', placeId);
+            }).catch(e => {
+              console.warn('فشل في تسجيل الزيارة:', e);
+            });
+          }
+          
+          // الانتقال بعد تسجيل الزيارة
+          setTimeout(() => {
+            window.location.href = `ads.html?placeId=${p.id || p["ID المكان"]}`;
+          }, 100);
+        });
+
+        const badge = card.querySelector('.status-badge');
+        const placeIdVal = p.id || p["ID المكان"] || '';
+        // إجبار الجلب من شيت الإعلانات
+        updateStatusBadge(badge, { placeId: placeIdVal, status: '' });
+
+        const packageBadge = card.querySelector('.package-badge');
+        // استخدم بادج "حالة المكان" بدل حالة الباقة
+        updatePlaceStatusBadge(packageBadge, placeStatus);
+
+        if (placeIdVal) {
+          PLACE_CARDS_BY_ID.set(String(placeIdVal), card);
+        }
+
+        frag.appendChild(card);
+      });
+
+      cardsGrid.appendChild(frag);
+    }
+
+    // فلترة محلية حسب القيم المختارة
+    function applyFilters() {
+      const selectedCityId = citySelect.value; // قد يكون فارغ
+      const selectedAreaName = areaSelect.value; // نخزّن الاسم مباشرة
+      const selectedActivity = activitySelect.value;
+      // const q = normalize(searchInput.value); // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      // const sortBy = sortSelect.value; // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+
+      // لو اختار مدينة، جيب اسم المدينة من الخريطة
+      // const selectedCityName = selectedCityId ? (CITY_ID_TO_NAME[selectedCityId] || '') : '';
+
+      // ضبط تمكين/تعطيل الحقول
+      updateControlLocking();
+
+      // const searchActive = q !== ''; // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      const filtersActive = Boolean(selectedCityId || selectedAreaName || selectedActivity);
+      const applyByFilters = filtersActive; // الفلتر له أولوية
+      // const applyBySearch = !filtersActive && searchActive; // البحث يعمل فقط إذا لم توجد فلاتر
+
+      const filtered = ALL_PLACES.filter(p => {
+        const city = p.city || p["city"] || p["المدينة"] || '';
+        const area = p.area || p["area"] || p["المنطقة"] || '';
+        const activity = p.activity || p["activity"] || p["نوع النشاط / الفئة"] || '';
+        const name = p.name || p["name"] || p["اسم المكان"] || '';
+        const address = p.address || p.address || p["العنوان التفصيلي"] || '';
+
+        const byCity = applyByFilters ? (selectedCityId ? (city === selectedCityId) : true) : true;
+        const byArea = applyByFilters ? (selectedAreaName ? (area === selectedAreaName) : true) : true;
+        const byAct  = applyByFilters ? (selectedActivity ? (activity === selectedActivity) : true) : true;
+        // const byQ    = applyBySearch ? (normalize(name).includes(q) || normalize(activity).includes(q) || normalize(address).includes(q)) : true; // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+
+        return byCity && byArea && byAct; // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+      });
+
+      // ترتيب النتائج
+      filtered.sort((a, b) => {
+        // switch (sortBy) { // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+        //   case 'dailyVisits':
+        //     const dailyA = Number(a.dailyVisits || a["عدد الزيارات اليومية"] || 0);
+        //     const dailyB = Number(b.dailyVisits || b["عدد الزيارات اليومية"] || 0);
+        //     return dailyB - dailyA; // تنازلي (الأكثر أولاً)
+        //   case 'totalVisits':
+        //     const totalA = Number(a.totalVisits || a["عدد الزيارات الكلي"] || 0);
+        //     const totalB = Number(b.totalVisits || b["عدد الزيارات الكلي"] || 0);
+        //     return totalB - totalA; // تنازلي (الأكثر أولاً)
+        //   case 'recent':
+        //     const dateA = new Date(a.startDate || a["تاريخ بداية الاشتراك"] || 0);
+        //     const dateB = new Date(b.startDate || b["تاريخ بداية الاشتراك"] || 0);
+        //     return dateB - dateA; // تنازلي (الأحدث أولاً)
+        //   case 'name':
+        //   default:
+            const nameA = (a.name || a["name"] || a["اسم المكان"] || '').toLowerCase();
+            const nameB = (b.name || b["name"] || b["اسم المكان"] || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        // }
+      });
+
+      renderCards(filtered);
+    }
+
+    // تحميل الفلاتر
+    async function loadFilters() {
+      const data = await fetchJSON(`${API_BASE}?action=getFilters`);
+      FILTERS.cities = data.cities || [];
+      FILTERS.areas = data.areas || [];
+      FILTERS.activities = data.activities || [];
+
+      // حفظ الفلاتر في التخزين المحلي لتسريع الرجوع من صفحة الإعلانات
+      try {
+        localStorage.setItem('makank_filters_cache', JSON.stringify(FILTERS));
+        localStorage.setItem('makank_filters_cache_ts', Date.now().toString());
+      } catch (e) { /* ignore */ }
+
+      // خريطة آي دي المدينة إلى اسمها
+      CITY_ID_TO_NAME = Object.fromEntries(FILTERS.cities.map(c => [String(c.id), c.name]));
+
+      // تعبئة المدن
+      setOptions(citySelect, FILTERS.cities.map(c => ({ value: c.name, label: c.name })));
+
+      // تعبئة الأنشطة (بدون تكرار جاي أصلاً من السيرفر)
+      setOptions(activitySelect, FILTERS.activities.map(a => ({ value: a.name, label: a.name })));
+
+      // تعبئة المناطق (كل المناطق مبدئيًا)
+      setOptions(areaSelect, FILTERS.areas.map(a => ({ value: a.name, label: a.name })));
+    }
+
+    // عند تغيير المدينة: نرشّح المناطق التابعة لها
+    function handleCityChange() {
+      const cityId = citySelect.value;
+      let areas = FILTERS.areas;
+      if (cityId) {
+        areas = areas.filter(a => a.cityName === citySelect.value);
+      }
+      setOptions(areaSelect, areas.map(a => ({ value: a.name, label: a.name })));
+      applyFilters();
+    }
+
+    // تحميل الأماكن (الكروت)
+    async function loadPlaces() {
+      const data = await fetchJSON(`${API_BASE}?action=getPlaces`);
+      // بعض الإصدارات قد ترجع مصفوفة مباشرة
+      ALL_PLACES = Array.isArray(data) ? data : (data.places || []);
+      renderCards(ALL_PLACES);
+
+      // حفظ الأماكن في التخزين المحلي لتسريع الرجوع من صفحة الإعلانات
+      try {
+        localStorage.setItem('makank_places_cache', JSON.stringify(ALL_PLACES));
+        localStorage.setItem('makank_places_cache_ts', Date.now().toString());
+      } catch (e) { /* ignore */ }
+    }
+
+    // تحديث تدريجي دون وميض: نحدّث الشارات ونضيف أي كروت جديدة فقط
+    async function refreshPlacesIncrementally() {
+      try {
+        const data = await fetchJSON(`${API_BASE}?action=getPlaces&_=${Date.now()}`);
+        const latest = Array.isArray(data) ? data : (data.places || []);
+        if (!Array.isArray(latest)) return;
+ 
+        latest.forEach(p => {
+          const placeIdVal = p.id || p["ID المكان"] || '';
+          if (!placeIdVal) return;
+          const key = String(placeIdVal);
+          const existing = PLACE_CARDS_BY_ID.get(key);
+          if (existing) {
+            const statusTopBadge = existing.querySelector('.status-badge');
+            // إجبار الجلب من شيت الإعلانات
+            updateStatusBadge(statusTopBadge, { placeId: placeIdVal, status: '' });
+            
+            // تحديث عدد الزيارات
+            const dailyVisits = p.dailyVisits || p["عدد الزيارات اليومية"] || 0;
+            const totalVisits = p.totalVisits || p["عدد الزيارات الكلي"] || 0;
+            const dailyElement = existing.querySelector('.text-emerald-500').nextElementSibling;
+            const totalElement = existing.querySelector('.text-blue-500').nextElementSibling;
+            if (dailyElement) dailyElement.textContent = `اليوم: ${dailyVisits}`;
+            if (totalElement) totalElement.textContent = `الإجمالي: ${totalVisits}`;
+
+            const packageBadge = existing.querySelector('.package-badge');
+            // عرض حالة المكان فقط في البادج الأيمن
+            const placeStatusNow = p.status || p['الحالة'] || '';
+            updatePlaceStatusBadge(packageBadge, placeStatusNow);
+
+            const registrationTextEl = existing.querySelector('.registration-status-text');
+            if (registrationTextEl) {
+              const regStatus = p.registrationStatus || p['حالة التسجيل'] || '';
+              registrationTextEl.textContent = regStatus ? `حالة التسجيل: ${regStatus}` : '';
+            }
+          } else {
+            // إنشاء كارت جديد وإلحاقه بدون إعادة بناء الشبكة
+            const card = document.createElement('article');
+            card.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition relative';
+ 
+            const imgSrc = p.image || p["image"] || p["رابط صورة شعار المكان"] || fallbackImg;
+            const name = p.name || p["name"] || p["اسم المكان"] || '—';
+            const activity = p.activity || p["activity"] || p["نوع النشاط / الفئة"] || '';
+            const city = p.city || p["city"] || p["المدينة"] || '';
+            const area = p.area || p["area"] || p["المنطقة"] || '';
+            const phone = p.phone || p["phone"] || p["رقم التواصل"] || '';
+            const whatsapp = p.whatsapp || p["whatsapp"] || p["رابط واتساب"] || '';
+            const desc = p.description || p["description"] || p["وصف مختصر"] || '';
+            const dailyVisits = p.dailyVisits || p["عدد الزيارات اليومية"] || 0;
+            const totalVisits = p.totalVisits || p["عدد الزيارات الكلي"] || 0;
+            const registrationStatus = p.registrationStatus || p["حالة التسجيل"] || '';
+            const packageStatus = p.packageStatus || p["حالة الباقة"] || '';
+            const placeStatus = p.status || p['الحالة'] || '';
+ 
+            card.innerHTML = `
+              <span class="status-badge absolute top-3 left-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10 backdrop-blur-sm"></span>
+              <span class="package-badge absolute top-12 right-3 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg z-10 backdrop-blur-sm"></span>
+              <div class="aspect-[16/10] bg-slate-100 overflow-hidden">
+                <img src="${imgSrc}" onerror="this.src='${fallbackImg}'" class="w-full h-full object-cover" alt="${name}">
+              </div>
+              <div class="p-4">
+                <h3 class="text-lg font-bold">${name}</h3>
+                <p class="text-sm text-slate-600 mt-1">${activity ? activity + ' • ' : ''}${city}${city && area ? ' - ' : ''}${area}</p>
+                ${desc ? `<p class="text-sm text-slate-600 mt-2 line-clamp-2">${desc}</p>` : ''}
+                <div class="flex items-center gap-4 mt-3 text-xs text-slate-500">
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                      <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>اليوم: ${dailyVisits}</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>الإجمالي: ${totalVisits}</span>
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 mt-3">
+                  ${phone ? `<a href="${phoneHref(phone)}" class="px-3 py-1.5 rounded-xl text-sm bg-slate-100 hover:bg-slate-200">اتصال</a>` : ''}
+                  ${whatsapp ? `<a target="_blank" href="${waHref(whatsapp)}" class="px-3 py-1.5 rounded-xl text-sm bg-emerald-100 hover:bg-emerald-200">واتساب</a>` : ''}
+                  ${mapLink ? `<a target="_blank" href="${mapLink}" class="px-3 py-1.5 rounded-xl text-sm bg-indigo-100 hover:bg-indigo-200">الخريطة</a>` : ''}
+                  ${email ? `<a href="mailto:${email}" class="px-3 py-1.5 rounded-xl text-sm bg-blue-100 hover:bg-blue-200">إيميل</a>` : ''}
+                  ${website ? `<a target="_blank" href="${website}" class="px-3 py-1.5 rounded-xl text-sm bg-violet-100 hover:bg-violet-200">الموقع</a>` : ''}
+                </div>
+              </div>`;
+ 
+            card.addEventListener('click', () => {
+              // حفظ الحالة الحالية قبل الانتقال
+              saveState();
+              
+              // تسجيل الزيارة قبل الانتقال
+              const placeId = placeIdVal;
+              if (placeId) {
+                fetch(`${API_BASE}?type=place&id=${placeId}&source=card_click`, { 
+                  method: 'GET',
+                  cache: 'no-store'
+                }).then(() => {
+                  console.log('تم تسجيل الزيارة للمكان:', placeId);
+                }).catch(e => {
+                  console.warn('فشل في تسجيل الزيارة:', e);
+                });
+              }
+              
+              // الانتقال بعد تسجيل الزيارة
+              setTimeout(() => {
+                window.location.href = `ads.html?placeId=${placeIdVal}`;
+              }, 100);
+            });
+ 
+            const badge = card.querySelector('.status-badge');
+            // إجبار الجلب من شيت الإعلانات
+            updateStatusBadge(badge, { placeId: placeIdVal, status: '' });
+
+            const packageBadge = card.querySelector('.package-badge');
+            // عرض حالة المكان فقط في البادج الأيمن
+            updatePlaceStatusBadge(packageBadge, placeStatus);
+ 
+            cardsGrid.appendChild(card);
+            PLACE_CARDS_BY_ID.set(key, card);
+          }
+        });
+      } catch (e) {
+        console.warn('incremental refresh failed', e);
+      }
+    }
+
+    // Listeners
+    citySelect.addEventListener('change', handleCityChange);
+    areaSelect.addEventListener('change', applyFilters);
+    activitySelect.addEventListener('change', applyFilters);
+    // sortSelect.addEventListener('change', applyFilters); // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+    // searchInput.addEventListener('input', () => { // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+    //   // Debounce خفيف
+    //   clearTimeout(searchInput._t);
+    //   searchInput._t = setTimeout(applyFilters, 200);
+    // });
+
+    // حفظ الحالة عند تغيير الفلاتر
+    function saveStateOnFilterChange() {
+      saveState();
+    }
+    
+    // إضافة مستمعي حفظ الحالة للفلاتر
+    citySelect.addEventListener('change', saveStateOnFilterChange);
+    areaSelect.addEventListener('change', saveStateOnFilterChange);
+    activitySelect.addEventListener('change', saveStateOnFilterChange);
+    // sortSelect.addEventListener('change', saveStateOnFilterChange); // تم حذف جميع الأكواد المتعلقة بـ sortSelect بناءً على طلب المستخدم
+    // searchInput.addEventListener('input', () => { // تم حذف جميع الأكواد المتعلقة بـ searchInput والبحث بالاسم/العنوان بناءً على طلب المستخدم
+    //   clearTimeout(searchInput._t);
+    //   searchInput._t = setTimeout(() => {
+    //     applyFilters();
+    //     saveStateOnFilterChange();
+    //   }, 200);
+    // });
+
+    // init
+    (async function init() {
+      // التحقق من العودة من صفحة الإعلانات
+      checkReturnFromAds();
+     
+      // تنظيف الحالة إذا كانت زيارة جديدة (وليس عودة من الإعلانات)
+      clearStateOnFreshLoad();
+      
+      let startTs = Date.now();
+      try {
+        // جرب استخدام الكاش دائماً
+            const cachedFilters = localStorage.getItem('makank_filters_cache');
+            const cachedPlaces = localStorage.getItem('makank_places_cache');
+            const filtersTs = parseInt(localStorage.getItem('makank_filters_cache_ts') || '0');
+            const placesTs = parseInt(localStorage.getItem('makank_places_cache_ts') || '0');
+            const now = Date.now();
+            const maxAge = 10 * 60 * 1000; // 10 دقائق
+            if (cachedFilters && cachedPlaces && (now - filtersTs < maxAge) && (now - placesTs < maxAge)) {
+              // استعادة الفلاتر
+              const parsedFilters = JSON.parse(cachedFilters);
+              if (parsedFilters && parsedFilters.cities && parsedFilters.areas && parsedFilters.activities) {
+                FILTERS = parsedFilters;
+            CITY_ID_TO_NAME = Object.fromEntries(FILTERS.cities.map(c => [String(c.name), c.name]));
+            setOptions(citySelect, FILTERS.cities.map(c => ({ value: c.name, label: c.name })));
+            setOptions(activitySelect, FILTERS.activities.map(a => ({ value: a.name, label: a.name })));
+                setOptions(areaSelect, FILTERS.areas.map(a => ({ value: a.name, label: a.name })));
+              }
+              // استعادة الأماكن
+              const parsedPlaces = JSON.parse(cachedPlaces);
+              if (Array.isArray(parsedPlaces)) {
+                ALL_PLACES = parsedPlaces;
+                renderCards(ALL_PLACES);
+                applySavedState();
+                updateControlLocking();
+            // أظهر رسالة تحميل بيانات أحدث إذا استخدم الكاش
+            if (cacheLoadingMsg) cacheLoadingMsg.classList.remove('hidden');
+          }
+        }
+        // أظهر رسالة تحميل بيانات أحدث إذا استخدم الكاش
+        if (cacheLoadingMsg) cacheLoadingMsg.classList.remove('hidden');
+        // حمّل بيانات جديدة دائماً من السيرفر
+          await loadFilters();
+          updateControlLocking();
+          await loadPlaces();
+        if (cacheLoadingMsg) cacheLoadingMsg.classList.add('hidden');
+      } catch (e) {
+        console.error(e);
+        cardsGrid.innerHTML = `<div class="col-span-full text-center text-red-600">حدث خطأ أثناء تحميل البيانات. تأكد من رابط الويب آب وصلاحيات الوصول.</div>`;
+      }
+    })();
+
+    // تحديث شامل للبيانات كل 30 ثانية بدون إعادة تحميل الصفحة
+    async function refreshAllData() {
+      try {
+        const data = await fetchJSON(`${API_BASE}?action=getPlaces&_=${Date.now()}`);
+        const latest = Array.isArray(data) ? data : (data.places || []);
+        if (!Array.isArray(latest)) return;
+
+        // تحديث البيانات المحلية
+        ALL_PLACES = latest;
+        
+        // إعادة تطبيق الفلاتر الحالية
+        applyFilters();
+        
+        console.log('تم تحديث جميع البيانات بنجاح');
+      } catch (e) {
+        console.warn('فشل في تحديث البيانات:', e);
+      }
+    }
+
+    // بدء التحديث الشامل بعد 30 ثانية من التحميل الأول
+    setTimeout(() => {
+      setInterval(refreshAllData, 60000);
+    }, 60000);
+  </script>
+  <script>
+    // منع أي submit أو ريفرش للصفحة في الفلاتر
+    document.querySelectorAll('form').forEach(f => {
+      f.addEventListener('submit', e => e.preventDefault());
+    });
+    [citySelect, areaSelect, activitySelect].forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+    });
+  </script>
+  <script>
+    function togglePopover(el) {
+      document.querySelectorAll('.popover-content').forEach(pop => pop.classList.add('hidden'));
+      const pop = el.parentElement.querySelector('.popover-content');
+      if (pop) pop.classList.toggle('hidden');
+      // إغلاق عند الضغط خارج الأيقونة
+      document.addEventListener('click', function handler(e) {
+        if (!el.contains(e.target) && !pop.contains(e.target)) {
+          pop.classList.add('hidden');
+          document.removeEventListener('click', handler);
+        }
+      });
+    }
+  </script>
+</body>
+</html> 

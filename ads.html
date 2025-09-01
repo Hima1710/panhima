@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الإعلانات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f8f9fa;
+            margin: 0; 
+            padding: 20px; 
+            min-height: 100vh;
+        }
+        .ads-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 20px; 
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .ad-card { 
+            position: relative; 
+            background: white;
+            border-radius: 12px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow: hidden; 
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        .ad-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border-color: #007bff;
+        }
+        .ad-images { 
+            padding: 15px; 
+            display: flex; 
+            gap: 10px; 
+            align-items: center;
+            overflow-x: auto;
+        }
+        .ad-images img { 
+            width: 120px; 
+            height: 120px; 
+            object-fit: cover; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid #f8f9fa;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .ad-images img:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        .ad-video { 
+            padding: 15px; 
+            display: flex; 
+            justify-content: center;
+        }
+        .ad-video video { 
+            width: 100%; 
+            max-width: 400px;
+            height: auto;
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .ad-video video:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        .ad-video iframe {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 16/9;
+            border: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 2px solid #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        .ad-video iframe:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border-color: #007bff;
+        }
+        .ad-details { 
+            padding: 20px; 
+            background: white;
+        }
+        .status-badge { 
+            position: absolute; 
+            top: 15px; 
+            right: 15px; 
+            padding: 8px 16px; 
+            color: white; 
+            border-radius: 25px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        .open { background: linear-gradient(135deg, #28a745, #20c997); }
+        .closed { background: linear-gradient(135deg, #dc3545, #e74c3c); }
+        .prayer { background: linear-gradient(135deg, #fd7e14, #ffc107); }
+        .unknown { background: linear-gradient(135deg, #6c757d, #495057); }
+        
+        /* أيقونات الحالة */
+        .status-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .coupon { 
+            background-color: #fff3cd; 
+            padding: 10px 15px; 
+            border-radius: 6px; 
+            display: inline-block; 
+            margin-top: 10px; 
+            font-weight: 600; 
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        h2 { 
+            text-align: center; 
+            color: #343a40; 
+            margin-bottom: 30px; 
+            font-size: 2.5em; 
+            font-weight: 600;
+        }
+        /* Loader */
+        .loader {
+            max-width: 1200px;
+            margin: 0 auto 10px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid #e9ecef;
+            border-top-color: #007bff;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        h3 { 
+            color: #212529; 
+            margin-bottom: 15px; 
+            font-size: 1.4em; 
+            font-weight: 600;
+        }
+        p { 
+            color: #6c757d; 
+            line-height: 1.6; 
+            margin-bottom: 12px; 
+            font-size: 1em;
+        }
+        strong { 
+            color: #495057; 
+            font-weight: 600;
+        }
+        /* Dev footer banner */
+        .dev-footer {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .dev-banner {
+            background: linear-gradient(135deg, #0d6efd, #845ef7);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 24px rgba(13,110,253,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .dev-banner a {
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: background-color 0.2s ease;
+        }
+        .dev-banner a:hover { background: rgba(255,255,255,0.25); }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .ads-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+            .ad-card {
+                margin: 0 5px;
+            }
+            h2 {
+                font-size: 2em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            .ad-images {
+                padding: 10px;
+                gap: 8px;
+            }
+            .ad-details {
+                padding: 15px;
+            }
+            h2 {
+                font-size: 1.8em;
+            }
+        }
+        .back-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            max-width: 1200px;
+            margin: 0 auto 12px;
+            padding: 10px 20px;
+            display: flex;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #0d6efd, #4dabf7);
+            color: #ffffff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 6px 18px rgba(13, 110, 253, 0.28);
+            transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-1px) scale(1.02);
+            box-shadow: 0 10px 24px rgba(13, 110, 253, 0.34);
+        }
+        .back-btn:active {
+            transform: translateY(0);
+            opacity: 0.95;
+        }
+        
+        /* Lightbox Styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            user-select: none;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+        .lightbox-close:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: scale(1.05);
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        .lightbox-prev, .lightbox-next {
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            margin: 0 20px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-prev:hover, .lightbox-next:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .lightbox-counter {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        @keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+    </style>
+</head>
+<body>
+
+<div class="back-bar">
+    <button id="backBtn" class="back-btn" aria-label="الرجوع إلى الصفحة الرئيسية">← رجوع</button>
+</div>
+
+<div id="loader" class="loader" role="status" aria-live="polite">
+    <img src="WhatsApp Image 2025-08-31 at 20.32.13_8048a3a3.jpg" alt=" شعار بانclass="w-24 h-24 object-contain mb-4 mx-auto logo-pulse" style="width: 96px; height: 96px; display: block; margin: 0 auto 16px; border-radius: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); animation: pulseLogo 1.2s infinite cubic-bezier(.4,0,.6,1);">
+    <div>جارٍ التحميل...</div>
+    <span class="sr-only">جاري تحميل البيانات</span>
+ </div>
+
+<h2>الإعلانات</h2>
+<div id="placeNameHeader" class="text-center text-2xl font-extrabold text-indigo-700 my-6"></div>
+<div class="ads-container" id="adsContainer"></div>
+
+<!-- Lightbox HTML -->
+<div id="lightbox" class="lightbox" aria-hidden="true">
+    <span class="lightbox-close" aria-label="إغلاق">&times;</span>
+    <div class="lightbox-content">
+        <img class="lightbox-img" id="lightbox-img" src="" alt="صورة مكبرة">
+        <div class="lightbox-counter" id="lightbox-counter"></div>
+    </div>
+    <div class="lightbox-nav">
+        <span class="lightbox-prev">&#10094;</span>
+        <span class="lightbox-next">&#10095;</span>
+    </div>
+</div>
+
+<div class="dev-footer">
+    <div class="dev-banner">
+        <div>تطوير: <strong>Muslim Tech _ مسلم تيك</strong></div>
+        <a href="https://wa.me/01108857529" target="_blank" rel="noopener">تواصل واتساب: 01108857529</a>
+    </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbwB0VE5COC0e6NQNKrxQeNRu2Mtt_QuMbVoBrH7tE6Da3X3BP6UxK926bt9fDO0WPU5/exec";
+
+// Lightbox functionality
+let currentImageIndex = 0;
+let imagesArray = [];
+
+function initLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.querySelector('.lightbox-close');
+    const lightboxPrev = document.querySelector('.lightbox-prev');
+    const lightboxNext = document.querySelector('.lightbox-next');
+    const lightboxCounter = document.getElementById('lightbox-counter');
+    
+    // Open lightbox when clicking on an image
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('ad-images') || e.target.classList.contains('ad-details')) return;
+        
+        const img = e.target.closest('img');
+        if (img && img.parentElement.classList.contains('ad-images')) {
+            e.preventDefault();
+            const card = img.closest('.ad-card');
+            const images = Array.from(card.querySelectorAll('.ad-images img'));
+            currentImageIndex = images.indexOf(img);
+            imagesArray = images.map(img => img.src);
+            
+            updateLightboxImage();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    });
+    
+    // Close lightbox
+    lightboxClose.addEventListener('click', function() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    });
+
+    // Close when clicking outside the content (on overlay)
+    lightbox.addEventListener('click', function(e) {
+        const clickedInsideContent = e.target.closest('.lightbox-content') || e.target.closest('.lightbox-prev') || e.target.closest('.lightbox-next');
+        if (!clickedInsideContent) {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Previous image
+    lightboxPrev.addEventListener('click', function() {
+        currentImageIndex = (currentImageIndex - 1 + imagesArray.length) % imagesArray.length;
+        updateLightboxImage();
+    });
+    
+    // Next image
+    lightboxNext.addEventListener('click', function() {
+        currentImageIndex = (currentImageIndex + 1) % imagesArray.length;
+        updateLightboxImage();
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (!lightbox.classList.contains('active')) return;
+        
+        if (e.key === 'Escape') {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        } else if (e.key === 'ArrowLeft') {
+            currentImageIndex = (currentImageIndex - 1 + imagesArray.length) % imagesArray.length;
+            updateLightboxImage();
+        } else if (e.key === 'ArrowRight') {
+            currentImageIndex = (currentImageIndex + 1) % imagesArray.length;
+            updateLightboxImage();
+        }
+    });
+    
+    function updateLightboxImage() {
+        lightboxImg.src = imagesArray[currentImageIndex];
+        lightboxCounter.textContent = `${currentImageIndex + 1} / ${imagesArray.length}`;
+    }
+}
+
+// دالة مساعدة لاختبار البيانات مباشرة
+function testAdData(placeId) {
+    console.log('=== TESTING AD DATA FOR PLACE ID:', placeId, '===');
+    
+    fetch(`${API_URL}?action=getAdsByPlaceId&placeId=${placeId}`, { cache: "no-store" })
+        .then(res => res.json())
+        .then(data => {
+            console.log('Raw API response:', data);
+            
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach((ad, index) => {
+                    console.log(`--- Ad ${index + 1} ---`);
+                    console.log('All ad properties:', Object.keys(ad));
+                    console.log('ad.status:', ad.status);
+                    console.log('ad["الحالة"]:', ad['الحالة']);
+                    console.log('ad["حالة الاعلان"]:', ad['حالة الاعلان']);
+                    console.log('ad["حالة المكان"]:', ad['حالة المكان']);
+                    console.log('ad.video:', ad.video);
+                    
+                    // البحث عن الحالة في جميع الخصائص
+                    Object.keys(ad).forEach(key => {
+                        const value = ad[key];
+                        if (typeof value === 'string' && (value === 'مفتوح' || value === 'مغلق' || value === 'مغلق للصلاة')) {
+                            console.log(`Found status in property "${key}":`, value);
+                        }
+                    });
+                });
+            } else {
+                console.log('No ads found for this place');
+            }
+        })
+        .catch(error => {
+            console.error('Error testing ad data:', error);
+        });
+}
+
+// تفعيل زر الرجوع
+const backBtn = document.getElementById('backBtn');
+if (backBtn) {
+    backBtn.addEventListener('click', () => {
+        if (history.length > 1) {
+            history.back();
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+}
+
+// Loader elements
+const loaderEl = document.getElementById('loader');
+function showLoader() { if (loaderEl) loaderEl.style.display = 'flex'; }
+function hideLoader() { if (loaderEl) loaderEl.style.display = 'none'; }
+let firstLoadDone = false;
+
+// دالة للحصول على أيقونة الحالة
+function getStatusIcon(status) {
+    switch (status.trim()) {
+        case 'مفتوح':
+            return `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>`;
+        case 'مغلق':
+            return `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>`;
+        case 'مغلق للصلاة':
+            return `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+            </svg>`;
+        default:
+            return `<svg class="status-icon" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>`;
+    }
+}
+
+async function fetchAds() {
+    const startTs = Date.now();
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeId = urlParams.get('placeId') || '';
+
+    // تسجيل الزيارة عند فتح الصفحة
+    if (placeId) {
+        try {
+            await fetch(`${API_URL}?type=place&id=${placeId}&source=ads_page`, { 
+                method: 'GET',
+                cache: 'no-store'
+            });
+            console.log('تم تسجيل الزيارة للمكان:', placeId);
+        } catch (e) {
+            console.warn('فشل في تسجيل الزيارة:', e);
+        }
+    }
+
+    try {
+        if (!firstLoadDone) showLoader();
+        const res = await fetch(`${API_URL}?action=getAdsByPlaceId&placeId=${placeId}`, { cache: "no-store" });
+        const data = await res.json();
+        displayAds(data);
+        const elapsed = Date.now() - startTs;
+        const remaining = Math.max(0, 1000 - elapsed);
+        setTimeout(() => { hideLoader(); firstLoadDone = true; }, remaining);
+    } catch (error) {
+        console.error("حدث خطأ في جلب البيانات:", error);
+        const elapsed = Date.now() - startTs;
+        const remaining = Math.max(0, 1000 - elapsed);
+        setTimeout(() => hideLoader(), remaining);
+    }
+}
+
+function displayAds(ads) {
+    const container = document.getElementById("adsContainer");
+    container.innerHTML = "";
+    
+    // استخراج اسم المكان من أول إعلان أو من بيانات المكان
+    let placeName = '';
+    if (Array.isArray(ads) && ads.length > 0) {
+        placeName = ads[0].placeName || ads[0]['اسم المكان'] || ads[0]['name'] || '';
+    }
+    if (placeName) {
+        document.getElementById('placeNameHeader').textContent = placeName;
+    } else {
+        document.getElementById('placeNameHeader').textContent = '';
+    }
+
+    // الحصول على placeId من URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const placeId = urlParams.get('placeId') || '';
+
+    ads.forEach(ad => {
+        let statusClass = '';
+        // تحديد دالة مساعدة لاختبار الروابط
+        const isUrlLike = (v) => typeof v === 'string' && /(https?:\/\/|\.mp4|\.mov|\.avi|youtube\.com|youtu\.be)/i.test(v);
+        
+        // نقرأ الحالة من الأعمدة المخصصة للحالة أولاً
+        let statusValue = ad['الحالة'] || ad['حالة الاعلان'] || ad.status || ad['حالة المكان'] || ad['state'] || '';
+        
+        console.log('=== STATUS SEARCH DEBUG ===');
+        console.log('ad["الحالة"]:', ad['الحالة']);
+        console.log('ad["حالة الاعلان"]:', ad['حالة الاعلان']);
+        console.log('ad.status:', ad.status);
+        console.log('ad["حالة المكان"]:', ad['حالة المكان']);
+        console.log('ad["state"]:', ad['state']);
+        console.log('Initial statusValue:', statusValue);
+        
+        // طباعة جميع خصائص الإعلان للبحث عن الحالة
+        console.log('=== ALL AD PROPERTIES ===');
+        Object.keys(ad).forEach(key => {
+            const value = ad[key];
+            if (typeof value === 'string' && (value === 'مفتوح' || value === 'مغلق' || value === 'مغلق للصلاة')) {
+                console.log(`Found status in property "${key}":`, value);
+            }
+        });
+        console.log('=== END ALL AD PROPERTIES ===');
+        console.log('=== END STATUS SEARCH DEBUG ===');
+        
+        // إذا لم نجد حالة في الأعمدة المخصصة، نبحث في جميع الأعمدة
+        if (!statusValue) {
+            // البحث في جميع الأعمدة عن قيم تشبه الحالة
+            const allColumns = Object.keys(ad);
+            for (let col of allColumns) {
+                const value = ad[col];
+                if (value && typeof value === 'string') {
+                    const trimmedValue = value.trim();
+                    // التحقق من أن القيمة تشبه حالة
+                    if (trimmedValue === 'مفتوح' || trimmedValue === 'مغلق' || trimmedValue === 'مغلق للصلاة') {
+                        statusValue = trimmedValue;
+                        console.log(`Found status in column "${col}":`, statusValue);
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // إذا لم نجد حالة في الإعلان، نحاول جلبها من بيانات المكان
+        if (!statusValue && placeId) {
+            console.log('=== FETCHING PLACE STATUS ===');
+            try {
+                // محاولة جلب بيانات المكان للحصول على الحالة
+                fetch(`${API_URL}?action=getPlaceById&placeId=${placeId}`, { cache: "no-store" })
+                    .then(res => res.json())
+                    .then(placeData => {
+                        console.log('Place data received:', placeData);
+                        if (placeData && placeData.status) {
+                            console.log('Found status from place data:', placeData.status);
+                            // تحديث الحالة في البطاقة
+                            const statusBadge = document.querySelector(`[data-place-id="${placeId}"] .status-badge`);
+                            if (statusBadge) {
+                                let placeStatus = placeData.status;
+                                let placeStatusClass = '';
+                                
+                                if (placeStatus === "مفتوح") placeStatusClass = 'open';
+                                else if (placeStatus === "مغلق") placeStatusClass = 'closed';
+                                else if (placeStatus === "مغلق للصلاة") placeStatusClass = 'prayer';
+                                else placeStatusClass = 'unknown';
+                                
+                                statusBadge.className = `status-badge ${placeStatusClass}`;
+                                statusBadge.textContent = placeStatus;
+                                console.log('Updated status badge with place status:', placeStatus);
+                            }
+                        } else {
+                            console.log('No status found in place data');
+                        }
+                    })
+                    .catch(e => {
+                        console.warn('Failed to fetch place status:', e);
+                    });
+            } catch (e) {
+                console.warn('Error fetching place status:', e);
+            }
+            console.log('=== END FETCHING PLACE STATUS ===');
+        }
+        
+        // نقرأ الفيديو المصرّح به صراحة
+        let candidateVideoField = ad['رابط الفيديو'] || ad['linkVideo'] || ad.video || '';
+        // إذا كان حقل الفيديو ليس رابطاً وينظر إلى أنه حالة، ونقص لدينا حالة، نستخدمه كحالة
+        if (!statusValue && candidateVideoField && !isUrlLike(candidateVideoField)) {
+            const videoValue = candidateVideoField.trim();
+            if (videoValue === 'مفتوح' || videoValue === 'مغلق' || videoValue === 'مغلق للصلاة') {
+                statusValue = videoValue;
+                console.log('Found status in video field:', statusValue);
+            }
+        }
+        
+        // تحسين: البحث في حقل الفيديو حتى لو كان لدينا حالة أخرى
+        if (candidateVideoField && !isUrlLike(candidateVideoField)) {
+            const videoValue = candidateVideoField.trim();
+            if (videoValue === 'مفتوح' || videoValue === 'مغلق' || videoValue === 'مغلق للصلاة') {
+                statusValue = videoValue;
+                console.log('Found status in video field (override):', statusValue);
+            }
+        }
+        
+        console.log('Final status value found:', statusValue);
+        console.log('Available columns:', Object.keys(ad));
+        
+        // طباعة جميع قيم الأعمدة للمساعدة في التشخيص
+        console.log('=== ALL COLUMN VALUES ===');
+        Object.keys(ad).forEach((key, index) => {
+            console.log(`${index}: ${key} =`, ad[key]);
+        });
+        console.log('=== END COLUMN VALUES ===');
+        
+        // طباعة معلومات إضافية عن البحث
+        console.log('=== STATUS SEARCH INFO ===');
+        console.log('Initial statusValue:', statusValue);
+        console.log('placeId:', placeId);
+        console.log('=== END STATUS SEARCH INFO ===');
+        
+        // طباعة معلومات إضافية عن البحث في الفيديو
+        console.log('=== VIDEO FIELD DEBUG ===');
+        console.log('candidateVideoField:', candidateVideoField);
+        console.log('isUrlLike(candidateVideoField):', isUrlLike(candidateVideoField));
+        console.log('=== END VIDEO FIELD DEBUG ===');
+        
+        // تنظيف النص وإزالة المسافات الزائدة
+        statusValue = statusValue ? statusValue.trim() : '';
+        
+        // طباعة الحالة النهائية قبل التطبيع
+        console.log('=== FINAL STATUS BEFORE NORMALIZATION ===');
+        console.log('statusValue before normalization:', statusValue);
+        console.log('=== END FINAL STATUS BEFORE NORMALIZATION ===');
+        
+        // تطبيع النص للتعامل مع الاختلافات في الكتابة
+        const normalizedStatus = statusValue.toLowerCase().replace(/\s+/g, '');
+        
+        console.log('=== NORMALIZATION DEBUG ===');
+        console.log('statusValue:', statusValue);
+        console.log('normalizedStatus:', normalizedStatus);
+        console.log('=== END NORMALIZATION DEBUG ===');
+        
+        if (normalizedStatus === "مفتوح" || normalizedStatus === "open" || normalizedStatus === "مفتوحة" || normalizedStatus === "نشط" || normalizedStatus === "active") {
+            statusClass = 'open';
+            statusValue = 'نشط';
+            console.log('Status set to: نشط (active/open)');
+        }
+        else if (normalizedStatus === "مغلق" || normalizedStatus === "closed" || normalizedStatus === "مغلقة") {
+            statusClass = 'closed';
+            statusValue = 'مغلق';
+            console.log('Status set to: مغلق (closed)');
+        }
+        else if (normalizedStatus === "مغلقللصلاة" || normalizedStatus === "prayer") {
+            statusClass = 'prayer';
+            statusValue = 'مغلق للصلاة';
+            console.log('Status set to: مغلق للصلاة (prayer)');
+        }
+        else if (statusValue === "مفتوح") {
+            statusClass = 'open';
+            console.log('Status set to: مفتوح (direct match)');
+        }
+        else if (statusValue === "مغلق") {
+            statusClass = 'closed';
+            console.log('Status set to: مغلق (direct match)');
+        }
+        else if (statusValue === "مغلق للصلاة") {
+            statusClass = 'prayer';
+            console.log('Status set to: مغلق للصلاة (direct match)');
+        }
+        else {
+            // إذا لم نجد حالة، نعرض "غير محدد"
+            statusClass = 'unknown';
+            statusValue = 'غير محدد';
+            console.log('No valid status found, using unknown');
+            console.log('=== FINAL STATUS DEBUG ===');
+            console.log('Final statusValue:', statusValue);
+            console.log('Final statusClass:', statusClass);
+            console.log('=== END FINAL STATUS DEBUG ===');
+        }
+
+        // جمع الصور والفيديو من الروابط
+        // تعديل هنا: جلب الصور من ad.images مباشرة
+        const allImages = Array.isArray(ad.images) ? ad.images.filter(img => img && img.trim() !== '') : [];
+        let videoUrl = '';
+        
+        // قراءة الفيديو من "رابط الفيديو"
+        if (ad['رابط الفيديو'] && ad['رابط الفيديو'].trim() !== '') {
+            videoUrl = ad['رابط الفيديو'].trim();
+            console.log('Found video URL from رابط الفيديو:', videoUrl);
+        } else if (ad.video && ad.video.trim() !== '') {
+            videoUrl = ad.video.trim();
+            console.log('Found video URL from ad.video:', videoUrl);
+        }
+        
+        console.log('Final video URL:', videoUrl);
+        console.log('Final images count:', allImages.length);
+
+        const imagesHtml = allImages.map(img => `<img src="${img}" alt="صورة" style="max-width: 100%; height: auto;">`).join('');
+        const videoHtml = videoUrl ? `<video src="${videoUrl}" controls muted></video>` : '';
+
+        // إزالة شارة الحالة من البطاقة
+        const adCard = `
+            <div class="ad-card" data-place-id="${placeId || ''}">
+                ${imagesHtml ? `<div class="ad-images">${imagesHtml}</div>` : '<p>لا توجد صور</p>'}
+                ${videoHtml ? `<div class="ad-video">${videoHtml}</div>` : ''}
+                <div class="ad-details">
+                    <h3>${ad.title || ad['العنوان'] || ''}</h3>
+                    <p><strong>نوع الإعلان:</strong> ${ad.type || ad['نوع الاعلان'] || ''}</p>
+                    <p>${ad.description || ad['الوصف'] || ''}</p>
+                    <p><strong>تاريخ البداية:</strong> ${ad['تاريخ البداية'] || ad['بداية'] || ad['Start Date'] || ad['start_date'] || ad.startDate || ''}</p>
+                    <p><strong>تاريخ النهاية:</strong> ${ad['تاريخ النهاية'] || ad['نهاية'] || ad['End Date'] || ad['end_date'] || ad.endDate || ''}</p>
+                    ${ad.coupon || ad['كوبون خصم'] ? `<div class="coupon">كوبون الخصم: ${ad.coupon || ad['كوبون خصم']}</div>` : ''}
+                    ${ad.registrationStatus || ad['حالة التسجيل'] ? `<div style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+                        <p style="margin: 0; font-weight: 600; color: #1976d2;">
+                            <strong>حالة التسجيل:</strong> ${ad.registrationStatus || ad['حالة التسجيل']}
+                        </p>
+                    </div>` : ''}
+                    ${ad.packageStatus || ad['حالة الباقة'] ? `<div style="margin-top: 10px; padding: 10px; background: #f3e5f5; border-radius: 8px; border-left: 4px solid #9c27b0;">
+                        <p style="margin: 0; font-weight: 600; color: #7b1fa2;">
+                            <strong>حالة الباقة:</strong> ${ad.packageStatus || ad['حالة الباقة']}
+                        </p>
+                    </div>` : ''}
+                    ${ad.mall || ad['الموقع أو المول'] || ad.location || ad['الموقع'] || ad['location'] ? `<div class="text-xs text-indigo-700 font-semibold mt-1">الموقع أو المول: <span class='font-normal text-slate-700'>${ad.mall || ad['الموقع أو المول'] || ad.location || ad['الموقع'] || ad['location']}</span></div>` : ''}
+                    ${ad.address || ad['العنوان التفصيلي'] || ad['العنوان'] || ad['address'] ? `<div class="text-xs text-slate-700 font-semibold mt-1 mb-2">العنوان: <span class='font-normal text-slate-700'>${ad.address || ad['العنوان التفصيلي'] || ad['العنوان'] || ad['address']}</span></div>` : ''}
+                </div>
+            </div>
+        `;
+        container.innerHTML += adCard;
+    });
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    fetchAds();
+    initLightbox(); // Initialize lightbox functionality
+});
+
+setInterval(fetchAds, 20000);
+
+// اختبار البيانات عند تحميل الصفحة
+const urlParams = new URLSearchParams(window.location.search);
+const testPlaceId = urlParams.get('placeId');
+if (testPlaceId) {
+    console.log('=== AUTO TESTING DATA ===');
+    setTimeout(() => {
+        testAdData(testPlaceId);
+    }, 2000); // انتظار ثانيتين لتحميل البيانات
+}
+</script>
+
+</body>
+</html>
